@@ -32,11 +32,16 @@ end
 
 -- 2. Update the CSS to render the new Zoom/Pan coordinates
 function Navigator:updateView()
-    -- Qt CSS requires forward slashes for file paths, even on Windows
+    -- Qt CSS requires forward slashes for file paths
     local safePath = self.imagePath:gsub("\\", "/")
     
+    -- Ensure the path starts with a slash for the file:/// URI scheme
+    if not safePath:starts("/") then
+        safePath = "/" .. safePath
+    end
+    
     local css = string.format([[
-        background-image: url("%s");
+        background-image: url("file://%s");
         background-color: #000000;
         background-repeat: no-repeat;
         background-position: %d%% %d%%;
@@ -44,6 +49,9 @@ function Navigator:updateView()
     ]], safePath, self.currentX, self.currentY, self.currentZoom)
 
     self.label:setStyleSheet(css)
+    
+    -- Debug line to show you exactly where it is looking:
+    cecho(string.format("\n<blue>[Navigator]:<reset> Attempting to load map from: <yellow>%s<reset>\n", safePath))
 end
 
 -- 3. Helper function to jump to specific named locations
