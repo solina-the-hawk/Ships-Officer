@@ -463,6 +463,20 @@ ShipsOfficer.masterAlias = tempAlias("^so(?:\\s+(.*))?$", string.format([[
             syntaxError()
         end
 
+        -- Route to Navigator Map
+    if module == "map" then
+        if rest == "hide" then
+            ShipsOfficer.Navigator.container:hide()
+            cecho("\n<blue>[Ship's Officer]:<reset> Map interface hidden.\n")
+        elseif rest == "show" then
+            ShipsOfficer.Navigator.container:show()
+            cecho("\n<blue>[Ship's Officer]:<reset> Map interface shown.\n")
+        elseif rest ~= "" then
+            ShipsOfficer.Navigator:lookAt(rest)
+        else
+            syntaxError()
+        end
+
     -- Route to Aide
     elseif module == "aide" then
         local cmd, args = rest:match("^(%%a+)%%s*(.*)$")
