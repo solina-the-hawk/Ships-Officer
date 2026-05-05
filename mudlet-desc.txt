@@ -1,12 +1,11 @@
-Shipfitter's Aide (v.1.0.0)
-A crafting and pricing utility for Achaea
+Ship's Officer: Comprehensive Nautical Command Suite (v0.5.0)
 
-Shipfitter's Aide takes the heavy math out of building and upgrading ships. It allows you to queue up a shopping list of ship commodities and complex ship equipment, breaks them down into their base materials (iron, wood, rope, cloth, animal fat), and can even scrape the live Achaean commodity market to give you an accurate gold cost estimation.
+A comprehensive, all-in-one nautical Mudlet package for Achaea.
 
-Features:
-- Look up material costs for individual ship commodities or ship equipment.
-- Maintain a persistent shopping list for your current ship build.
-- Automatically break down complex equipment into base commodity totals.
-- "shipaide cost" command safely staggers 'cm list' queries, gags the screen spam, and calculates the exact gold needed based on current market availability.
+Ship's Officer consolidates everything you need to build, manage, sail, and fight with your ship into a unified, modular UI accessed through a single master alias ("so"). 
 
-To get started, simply type: shipaide help
+Features include the "Shipfitter" module for breaking down complex equipment into base materials, equilibrium-safe live market cost estimation, persistent nominal price tracking, and the "Navigator" module which provides a toggleable graphical interface for charting the Sea Wilderness map. 
+
+To configure your active modules, edit commodity conversion rates, or add new ship equipment to the calculator, simply open the Ship's Officer Core script in your Script Editor and adjust the tables at the top. 
+
+You can also type "so help" in the game to see a complete directory of commands and available nautical tools!
