@@ -53,7 +53,7 @@ All commands are routed through the master `so` alias.
 | `so map show` / `hide` | Toggles the visibility of the map interface. |
 | **Aide Commands** | |
 | `so aide equip` | Lists all available ship equipment you can add to your list. |
-| `so aide equip <amount> <equipment>` | Adds the required materials for a piece of ship equipment to your list (e.g., `so aide equip 1 small hull`). |
+| `so aide equip <amount> <equipment>` | Adds the required materials for a piece of ship equipment to your list (e.g., `so aide equip 1 ballista`). |
 | `so aide add <amount> <commodity>` | Adds raw materials or ship commodities directly to your list. |
 | `so aide calc <amount> <commodity>` | Instantly calculates the base materials for a single ship commodity without affecting your list. |
 | `so aide list` | Displays your currently queued list and the total base commodities needed. |
