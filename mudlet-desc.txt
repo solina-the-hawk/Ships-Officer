@@ -1,0 +1,12 @@
+Shipfitter's Aide (v.1.0.0)
+A crafting and pricing utility for Achaea
+
+Shipfitter's Aide takes the heavy math out of building and upgrading ships. It allows you to queue up a shopping list of ship commodities and complex ship equipment, breaks them down into their base materials (iron, wood, rope, cloth, animal fat), and can even scrape the live Achaean commodity market to give you an accurate gold cost estimation.
+
+Features:
+- Look up material costs for individual ship commodities or ship equipment.
+- Maintain a persistent shopping list for your current ship build.
+- Automatically break down complex equipment into base commodity totals.
+- "shipaide cost" command safely staggers 'cm list' queries, gags the screen spam, and calculates the exact gold needed based on current market availability.
+
+To get started, simply type: shipaide help

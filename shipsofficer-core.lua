@@ -436,7 +436,7 @@ end
 if ShipsOfficer.masterAlias then killAlias(ShipsOfficer.masterAlias) end
 
 -- Create the Unified Master Alias
-ShipsOfficer.masterAlias = tempAlias("^so(?:\\s+(.*))?$", string.format([[
+ShipsOfficer.masterAlias = tempAlias("^so(?:\\s+(.*))?$", [[
     local input = matches[2] or ""
 
     if input == "" or input:lower() == "help" then
@@ -446,24 +446,16 @@ ShipsOfficer.masterAlias = tempAlias("^so(?:\\s+(.*))?$", string.format([[
 
     -- Helper to catch bad syntax
     local function syntaxError()
-        cecho(string.format("\n<firebrick>[Ship's Officer]:<reset> Invalid command or syntax: 'so %%s'\n", input))
+        cecho(string.format("\n<firebrick>[Ship's Officer]:<reset> Invalid command or syntax: 'so %s'\n", input))
         cecho("<SeaGreen>[Ship's Officer]:<reset> Showing help menu...\n")
         ShipsOfficer.showHelp()
     end
 
     -- Split input into module and remainder
-    local module, rest = input:match("^(%%a+)%%s*(.*)$")
+    local module, rest = input:match("^(%a+)%s*(.*)$")
     module = module and module:lower() or ""
 
     -- Route to Navigator Map
-    if module == "map" then
-        if rest ~= "" then
-            ShipsOfficer.Navigator:lookAt(rest)
-        else
-            syntaxError()
-        end
-
-        -- Route to Navigator Map
     if module == "map" then
         if rest == "hide" then
             ShipsOfficer.Navigator.container:hide()
@@ -479,22 +471,22 @@ ShipsOfficer.masterAlias = tempAlias("^so(?:\\s+(.*))?$", string.format([[
 
     -- Route to Aide
     elseif module == "aide" then
-        local cmd, args = rest:match("^(%%a+)%%s*(.*)$")
+        local cmd, args = rest:match("^(%a+)%s*(.*)$")
         cmd = cmd and cmd:lower() or ""
 
         if cmd == "calc" then
-            local amt, comm = args:match("^(%%d+)%%s+(%%a+)$")
+            local amt, comm = args:match("^(%d+)%s+(%a+)$")
             if amt and comm then ShipsOfficer.Aide.calculateSingle(amt, comm) else syntaxError() end
 
         elseif cmd == "add" then
-            local amt, comm = args:match("^(%%d+)%%s+(%%a+)$")
+            local amt, comm = args:match("^(%d+)%s+(%a+)$")
             if amt and comm then ShipsOfficer.Aide.addToList(amt, comm) else syntaxError() end
 
         elseif cmd == "equip" then
             if args == "" then
                 ShipsOfficer.Aide.listEquipment()
             else
-                local amt, equip = args:match("^(%%d+)%%s+(.+)$")
+                local amt, equip = args:match("^(%d+)%s+(.+)$")
                 if amt and equip then ShipsOfficer.Aide.addEquipToList(amt, equip) else syntaxError() end
             end
 
@@ -519,7 +511,7 @@ ShipsOfficer.masterAlias = tempAlias("^so(?:\\s+(.*))?$", string.format([[
     else
         syntaxError()
     end
-]]))
+]])
 
 -- =========================================================================
 -- INITIALIZATION CALLS
