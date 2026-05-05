@@ -5,9 +5,9 @@
 -- Master Namespace Initialization
 ShipsOfficer = ShipsOfficer or {}
 ShipsOfficer.Navigator = ShipsOfficer.Navigator or {}
-ShipsOfficer.Aide = ShipsOfficer.Aide or {}
-ShipsOfficer.Aide.rawList = ShipsOfficer.Aide.rawList or {}
-ShipsOfficer.Aide.equipList = ShipsOfficer.Aide.equipList or {}
+ShipsOfficer.shipfit = ShipsOfficer.shipfit or {}
+ShipsOfficer.shipfit.rawList = ShipsOfficer.shipfit.rawList or {}
+ShipsOfficer.shipfit.equipList = ShipsOfficer.shipfit.equipList or {}
 
 -- =========================================================================
 -- MODULE 1: NAVIGATOR (Map UI)
@@ -74,11 +74,11 @@ function ShipsOfficer.Navigator:lookAt(location)
 end
 
 -- =========================================================================
--- MODULE 2: AIDE (Shipfitter's Calculator)
+-- MODULE 2: shipfit (Shipfitter's Calculator)
 -- =========================================================================
 
--- Aide Databases
-ShipsOfficer.Aide.recipes = {
+-- shipfit Databases
+ShipsOfficer.shipfit.recipes = {
     shipcloth = { cloth = 50 },
     shipiron  = { iron = 50, steel = 10 },
     shipwood  = { wood = 50, iron = 10 },
@@ -86,7 +86,7 @@ ShipsOfficer.Aide.recipes = {
     pitch     = { wood = 50, fat = 10 }
 }
 
-ShipsOfficer.Aide.equipment = {
+ShipsOfficer.shipfit.equipment = {
     baittank     = { name = "Bait Tank", materials = { shipiron = 40, pitch = 5 } },
     beacon       = { name = "Beacon", materials = { shipiron = 20, goldbar = 50, stone = 50 } },
     trunk        = { name = "Trunk", materials = { shipwood = 5, shipiron = 5 } },
@@ -106,25 +106,25 @@ ShipsOfficer.Aide.equipment = {
     thrower      = { name = "Thrower", materials = { shipiron = 30, shipwood = 25, shiplines = 20 } }
 }
 
-ShipsOfficer.Aide.nominalPrices = {
+ShipsOfficer.shipfit.nominalPrices = {
     iron = 23, steel = 1050, wood = 105, rope = 23, cloth = 10, fat = 1, goldbar = 1000, stone = 40, leather = 40
 }
 
--- Aide File I/O
-function ShipsOfficer.Aide.getSavePath()
-    return getMudletHomeDir() .. "/ShipsOfficer-Aide-Prices.lua"
+-- shipfit File I/O
+function ShipsOfficer.shipfit.getSavePath()
+    return getMudletHomeDir() .. "/ShipsOfficer-shipfit-Prices.lua"
 end
 
-function ShipsOfficer.Aide.savePrices()
-    table.save(ShipsOfficer.Aide.getSavePath(), ShipsOfficer.Aide.nominalPrices)
+function ShipsOfficer.shipfit.savePrices()
+    table.save(ShipsOfficer.shipfit.getSavePath(), ShipsOfficer.shipfit.nominalPrices)
 end
 
-function ShipsOfficer.Aide.loadPrices()
-    local save_path = ShipsOfficer.Aide.getSavePath()
+function ShipsOfficer.shipfit.loadPrices()
+    local save_path = ShipsOfficer.shipfit.getSavePath()
     if io.exists(save_path) then
         local saved_prices = {}
         table.load(save_path, saved_prices)
-        for k, v in pairs(saved_prices) do ShipsOfficer.Aide.nominalPrices[k] = v end
+        for k, v in pairs(saved_prices) do ShipsOfficer.shipfit.nominalPrices[k] = v end
     end
 end
 
@@ -139,29 +139,29 @@ function ShipsOfficer.formatNumber(amount)
     return formatted
 end
 
--- Aide List Management
-function ShipsOfficer.Aide.listEquipment()
+-- shipfit List Management
+function ShipsOfficer.shipfit.listEquipment()
     cecho("\n<SeaGreen>=================================================================<reset>\n")
     cecho("<SeaGreen>                  Available Ship Equipment                       <reset>\n")
     cecho("<SeaGreen>=================================================================<reset>\n\n")
 
     local sortedKeys = {}
-    for k, _ in pairs(ShipsOfficer.Aide.equipment) do table.insert(sortedKeys, k) end
+    for k, _ in pairs(ShipsOfficer.shipfit.equipment) do table.insert(sortedKeys, k) end
     table.sort(sortedKeys)
 
     for _, key in ipairs(sortedKeys) do
-        local item = ShipsOfficer.Aide.equipment[key]
+        local item = ShipsOfficer.shipfit.equipment[key]
         cecho(string.format("  * <cyan>%-15s<reset> : <white>%s<reset>\n", key, item.name))
     end
     
     cecho("\n<SeaGreen>=================================================================<reset>\n")
-    cecho("  Use <cyan>so aide equip <amount> <keyword><reset> to add to your list.\n\n")
+    cecho("  Use <cyan>so shipfit equip <amount> <keyword><reset> to add to your list.\n\n")
 end
 
-function ShipsOfficer.Aide.calculateSingle(amount, comm)
+function ShipsOfficer.shipfit.calculateSingle(amount, comm)
     amount = tonumber(amount) or 1
     comm = comm:lower()
-    local recipe = ShipsOfficer.Aide.recipes[comm]
+    local recipe = ShipsOfficer.shipfit.recipes[comm]
 
     if not recipe then
         cecho(string.format("\n<firebrick>[Ship's Officer]:<reset> Unknown ship commodity '%s'. Valid: shipcloth, shipiron, shipwood, shiplines, pitch.\n", comm))
@@ -177,52 +177,52 @@ function ShipsOfficer.Aide.calculateSingle(amount, comm)
     echo("\n")
 end
 
-function ShipsOfficer.Aide.addToList(amount, comm)
+function ShipsOfficer.shipfit.addToList(amount, comm)
     amount = tonumber(amount) or 1
     comm = comm:lower()
-    ShipsOfficer.Aide.rawList[comm] = (ShipsOfficer.Aide.rawList[comm] or 0) + amount
-    cecho(string.format("\n<SeaGreen>[Ship's Officer]:<reset> Added <white>%s %s<reset> to your list. (Total: %s)\n", ShipsOfficer.formatNumber(amount), comm, ShipsOfficer.formatNumber(ShipsOfficer.Aide.rawList[comm])))
+    ShipsOfficer.shipfit.rawList[comm] = (ShipsOfficer.shipfit.rawList[comm] or 0) + amount
+    cecho(string.format("\n<SeaGreen>[Ship's Officer]:<reset> Added <white>%s %s<reset> to your list. (Total: %s)\n", ShipsOfficer.formatNumber(amount), comm, ShipsOfficer.formatNumber(ShipsOfficer.shipfit.rawList[comm])))
 end
 
-function ShipsOfficer.Aide.addEquipToList(amount, equip)
+function ShipsOfficer.shipfit.addEquipToList(amount, equip)
     amount = tonumber(amount) or 1
     equip = equip:lower():gsub(" ", "") 
-    local item = ShipsOfficer.Aide.equipment[equip]
+    local item = ShipsOfficer.shipfit.equipment[equip]
 
     if not item then
         cecho(string.format("\n<firebrick>[Ship's Officer]:<reset> Unknown ship equipment '%s'.\n", equip))
         return
     end
 
-    ShipsOfficer.Aide.equipList[equip] = (ShipsOfficer.Aide.equipList[equip] or 0) + amount
+    ShipsOfficer.shipfit.equipList[equip] = (ShipsOfficer.shipfit.equipList[equip] or 0) + amount
     cecho(string.format("\n<SeaGreen>[Ship's Officer]:<reset> Queued <white>%s %s<reset>.\n", ShipsOfficer.formatNumber(amount), item.name))
 end
 
-function ShipsOfficer.Aide.clearList()
-    ShipsOfficer.Aide.rawList = {}
-    ShipsOfficer.Aide.equipList = {}
+function ShipsOfficer.shipfit.clearList()
+    ShipsOfficer.shipfit.rawList = {}
+    ShipsOfficer.shipfit.equipList = {}
     cecho("\n<SeaGreen>[Ship's Officer]:<reset> Shopping list cleared.\n")
 end
 
-function ShipsOfficer.Aide.calculateList()
-    if next(ShipsOfficer.Aide.rawList) == nil and next(ShipsOfficer.Aide.equipList) == nil then
-        cecho("\n<firebrick>[Ship's Officer]:<reset> Your shopping list is empty. Use 'so aide add' or 'so aide equip' first.\n")
+function ShipsOfficer.shipfit.calculateList()
+    if next(ShipsOfficer.shipfit.rawList) == nil and next(ShipsOfficer.shipfit.equipList) == nil then
+        cecho("\n<firebrick>[Ship's Officer]:<reset> Your shopping list is empty. Use 'so shipfit add' or 'so shipfit equip' first.\n")
         return
     end
 
     cecho("\n<SeaGreen>[Ship's Officer]:<reset> Current Shopping List:\n")
 
-    if next(ShipsOfficer.Aide.equipList) ~= nil then
+    if next(ShipsOfficer.shipfit.equipList) ~= nil then
         cecho("\n  <cyan>Equipment Queued:<reset>\n")
-        for equip, amt in pairs(ShipsOfficer.Aide.equipList) do
-            local item = ShipsOfficer.Aide.equipment[equip]
+        for equip, amt in pairs(ShipsOfficer.shipfit.equipList) do
+            local item = ShipsOfficer.shipfit.equipment[equip]
             cecho(string.format("    * <white>%s<reset> %s\n", ShipsOfficer.formatNumber(amt), item.name))
         end
     end
 
-    if next(ShipsOfficer.Aide.rawList) ~= nil then
+    if next(ShipsOfficer.shipfit.rawList) ~= nil then
         cecho("\n  <cyan>Additional Materials Queued:<reset>\n")
-        for comm, amt in pairs(ShipsOfficer.Aide.rawList) do
+        for comm, amt in pairs(ShipsOfficer.shipfit.rawList) do
             cecho(string.format("    * <white>%s<reset> %s\n", ShipsOfficer.formatNumber(amt), comm))
         end
     end
@@ -230,15 +230,15 @@ function ShipsOfficer.Aide.calculateList()
     local combinedRaw = {}
     local baseTotals = {}
 
-    for comm, amt in pairs(ShipsOfficer.Aide.rawList) do combinedRaw[comm] = (combinedRaw[comm] or 0) + amt end
-    for equip, amt in pairs(ShipsOfficer.Aide.equipList) do
-        local item = ShipsOfficer.Aide.equipment[equip]
+    for comm, amt in pairs(ShipsOfficer.shipfit.rawList) do combinedRaw[comm] = (combinedRaw[comm] or 0) + amt end
+    for equip, amt in pairs(ShipsOfficer.shipfit.equipList) do
+        local item = ShipsOfficer.shipfit.equipment[equip]
         for comm, commAmt in pairs(item.materials) do combinedRaw[comm] = (combinedRaw[comm] or 0) + (commAmt * amt) end
     end
 
     for comm, amt in pairs(combinedRaw) do
-        if ShipsOfficer.Aide.recipes[comm] then
-            for bComm, bAmount in pairs(ShipsOfficer.Aide.recipes[comm]) do
+        if ShipsOfficer.shipfit.recipes[comm] then
+            for bComm, bAmount in pairs(ShipsOfficer.shipfit.recipes[comm]) do
                 baseTotals[bComm] = (baseTotals[bComm] or 0) + (bAmount * amt)
             end
         else
@@ -254,30 +254,30 @@ function ShipsOfficer.Aide.calculateList()
     echo("\n")
 end
 
-function ShipsOfficer.Aide.calculateCost(mode)
+function ShipsOfficer.shipfit.calculateCost(mode)
     mode = mode or "avg"
 
-    if next(ShipsOfficer.Aide.rawList) == nil and next(ShipsOfficer.Aide.equipList) == nil then
+    if next(ShipsOfficer.shipfit.rawList) == nil and next(ShipsOfficer.shipfit.equipList) == nil then
         cecho("\n<firebrick>[Ship's Officer]:<reset> Your shopping list is empty. Add items first.\n")
         return
     end
 
     local combinedRaw = {}
-    ShipsOfficer.Aide.baseTotals = {} 
+    ShipsOfficer.shipfit.baseTotals = {} 
 
-    for comm, amt in pairs(ShipsOfficer.Aide.rawList) do combinedRaw[comm] = (combinedRaw[comm] or 0) + amt end
-    for equip, amt in pairs(ShipsOfficer.Aide.equipList) do
-        local item = ShipsOfficer.Aide.equipment[equip]
+    for comm, amt in pairs(ShipsOfficer.shipfit.rawList) do combinedRaw[comm] = (combinedRaw[comm] or 0) + amt end
+    for equip, amt in pairs(ShipsOfficer.shipfit.equipList) do
+        local item = ShipsOfficer.shipfit.equipment[equip]
         for comm, commAmt in pairs(item.materials) do combinedRaw[comm] = (combinedRaw[comm] or 0) + (commAmt * amt) end
     end
 
     for comm, amt in pairs(combinedRaw) do
-        if ShipsOfficer.Aide.recipes[comm] then
-            for bComm, bAmount in pairs(ShipsOfficer.Aide.recipes[comm]) do
-                ShipsOfficer.Aide.baseTotals[bComm] = (ShipsOfficer.Aide.baseTotals[bComm] or 0) + (bAmount * amt)
+        if ShipsOfficer.shipfit.recipes[comm] then
+            for bComm, bAmount in pairs(ShipsOfficer.shipfit.recipes[comm]) do
+                ShipsOfficer.shipfit.baseTotals[bComm] = (ShipsOfficer.shipfit.baseTotals[bComm] or 0) + (bAmount * amt)
             end
         else
-            ShipsOfficer.Aide.baseTotals[comm] = (ShipsOfficer.Aide.baseTotals[comm] or 0) + amt
+            ShipsOfficer.shipfit.baseTotals[comm] = (ShipsOfficer.shipfit.baseTotals[comm] or 0) + amt
         end
     end
 
@@ -285,9 +285,9 @@ function ShipsOfficer.Aide.calculateCost(mode)
         local grandTotal = 0
         cecho("\n<SeaGreen>[Ship's Officer]:<reset> Average Cost Estimation (Instant):\n")
         
-        for bComm, totalNeeded in pairs(ShipsOfficer.Aide.baseTotals) do
+        for bComm, totalNeeded in pairs(ShipsOfficer.shipfit.baseTotals) do
             local displayComm = bComm == "fat" and "animal fat" or bComm
-            local avgPrice = ShipsOfficer.Aide.nominalPrices[bComm] or 50 
+            local avgPrice = ShipsOfficer.shipfit.nominalPrices[bComm] or 50 
             local cost = totalNeeded * avgPrice
             grandTotal = grandTotal + cost
 
@@ -299,79 +299,79 @@ function ShipsOfficer.Aide.calculateCost(mode)
     end
 
     -- Market Scraper Mode
-    ShipsOfficer.Aide.marketNeeded = {}
+    ShipsOfficer.shipfit.marketNeeded = {}
     local commCount = 0
-    for k, v in pairs(ShipsOfficer.Aide.baseTotals) do 
-        ShipsOfficer.Aide.marketNeeded[k] = v 
+    for k, v in pairs(ShipsOfficer.shipfit.baseTotals) do 
+        ShipsOfficer.shipfit.marketNeeded[k] = v 
         commCount = commCount + 1
     end
     
-    ShipsOfficer.Aide.marketBought = {}
-    ShipsOfficer.Aide.marketCost = {}
+    ShipsOfficer.shipfit.marketBought = {}
+    ShipsOfficer.shipfit.marketCost = {}
 
     local estimatedTime = (commCount * 1.6) + 1.0
     cecho(string.format("\n<SeaGreen>[Ship's Officer]:<reset> Fetching live market prices. Please <yellow>stand still for %.1f seconds<reset>...\n", estimatedTime))
 
-    if ShipsOfficer.Aide.gagTrigger1 then killTrigger(ShipsOfficer.Aide.gagTrigger1) end
-    ShipsOfficer.Aide.gagTrigger1 = tempRegexTrigger("^Listing all .+ commodities:$", [[deleteLine()]])
+    if ShipsOfficer.shipfit.gagTrigger1 then killTrigger(ShipsOfficer.shipfit.gagTrigger1) end
+    ShipsOfficer.shipfit.gagTrigger1 = tempRegexTrigger("^Listing all .+ commodities:$", [[deleteLine()]])
 
-    if ShipsOfficer.Aide.gagTrigger2 then killTrigger(ShipsOfficer.Aide.gagTrigger2) end
-    ShipsOfficer.Aide.gagTrigger2 = tempRegexTrigger("^Commodity\\s+Price\\s+Quantity Available$", [[deleteLine()]])
+    if ShipsOfficer.shipfit.gagTrigger2 then killTrigger(ShipsOfficer.shipfit.gagTrigger2) end
+    ShipsOfficer.shipfit.gagTrigger2 = tempRegexTrigger("^Commodity\\s+Price\\s+Quantity Available$", [[deleteLine()]])
 
-    if ShipsOfficer.Aide.gagTrigger3 then killTrigger(ShipsOfficer.Aide.gagTrigger3) end
-    ShipsOfficer.Aide.gagTrigger3 = tempRegexTrigger("^\\-{40,}$", [[deleteLine()]]) 
+    if ShipsOfficer.shipfit.gagTrigger3 then killTrigger(ShipsOfficer.shipfit.gagTrigger3) end
+    ShipsOfficer.shipfit.gagTrigger3 = tempRegexTrigger("^\\-{40,}$", [[deleteLine()]]) 
 
-    if ShipsOfficer.Aide.gagTrigger4 then killTrigger(ShipsOfficer.Aide.gagTrigger4) end
-    ShipsOfficer.Aide.gagTrigger4 = tempRegexTrigger("^There are no .+ commodities for sale\\.$", [[deleteLine()]])
+    if ShipsOfficer.shipfit.gagTrigger4 then killTrigger(ShipsOfficer.shipfit.gagTrigger4) end
+    ShipsOfficer.shipfit.gagTrigger4 = tempRegexTrigger("^There are no .+ commodities for sale\\.$", [[deleteLine()]])
 
-    if ShipsOfficer.Aide.scraperTrigger then killTrigger(ShipsOfficer.Aide.scraperTrigger) end
-    ShipsOfficer.Aide.scraperTrigger = tempRegexTrigger("^([A-Za-z ]+?)\\s+(\\d+)gp\\s+(\\d+)$", [[
+    if ShipsOfficer.shipfit.scraperTrigger then killTrigger(ShipsOfficer.shipfit.scraperTrigger) end
+    ShipsOfficer.shipfit.scraperTrigger = tempRegexTrigger("^([A-Za-z ]+?)\\s+(\\d+)gp\\s+(\\d+)$", [[
         deleteLine()
         local comm = matches[2]:lower():match("^%s*(.-)%s*$") 
         if comm == "animal fat" then comm = "fat" end
         local price = tonumber(matches[3])
         local avail = tonumber(matches[4])
 
-        if ShipsOfficer.Aide.marketNeeded[comm] and ShipsOfficer.Aide.marketNeeded[comm] > 0 then
-            local taking = math.min(avail, ShipsOfficer.Aide.marketNeeded[comm])
-            ShipsOfficer.Aide.marketNeeded[comm] = ShipsOfficer.Aide.marketNeeded[comm] - taking
-            ShipsOfficer.Aide.marketBought[comm] = (ShipsOfficer.Aide.marketBought[comm] or 0) + taking
-            ShipsOfficer.Aide.marketCost[comm] = (ShipsOfficer.Aide.marketCost[comm] or 0) + (taking * price)
+        if ShipsOfficer.shipfit.marketNeeded[comm] and ShipsOfficer.shipfit.marketNeeded[comm] > 0 then
+            local taking = math.min(avail, ShipsOfficer.shipfit.marketNeeded[comm])
+            ShipsOfficer.shipfit.marketNeeded[comm] = ShipsOfficer.shipfit.marketNeeded[comm] - taking
+            ShipsOfficer.shipfit.marketBought[comm] = (ShipsOfficer.shipfit.marketBought[comm] or 0) + taking
+            ShipsOfficer.shipfit.marketCost[comm] = (ShipsOfficer.shipfit.marketCost[comm] or 0) + (taking * price)
         end
     ]])
 
     local delay = 0
-    for bComm, _ in pairs(ShipsOfficer.Aide.baseTotals) do
+    for bComm, _ in pairs(ShipsOfficer.shipfit.baseTotals) do
         local queryComm = bComm == "fat" and "animal fat" or bComm
         tempTimer(delay, string.format([[send("cm list %s", false)]], queryComm))
         delay = delay + 1.6
     end
 
-    if ShipsOfficer.Aide.summaryTimer then killTimer(ShipsOfficer.Aide.summaryTimer) end
-    ShipsOfficer.Aide.summaryTimer = tempTimer(delay + 1.5, [[ShipsOfficer.Aide.printCostSummary()]])
+    if ShipsOfficer.shipfit.summaryTimer then killTimer(ShipsOfficer.shipfit.summaryTimer) end
+    ShipsOfficer.shipfit.summaryTimer = tempTimer(delay + 1.5, [[ShipsOfficer.shipfit.printCostSummary()]])
 end
 
-function ShipsOfficer.Aide.printCostSummary()
-    if ShipsOfficer.Aide.scraperTrigger then killTrigger(ShipsOfficer.Aide.scraperTrigger); ShipsOfficer.Aide.scraperTrigger = nil end
-    if ShipsOfficer.Aide.gagTrigger1 then killTrigger(ShipsOfficer.Aide.gagTrigger1); ShipsOfficer.Aide.gagTrigger1 = nil end
-    if ShipsOfficer.Aide.gagTrigger2 then killTrigger(ShipsOfficer.Aide.gagTrigger2); ShipsOfficer.Aide.gagTrigger2 = nil end
-    if ShipsOfficer.Aide.gagTrigger3 then killTrigger(ShipsOfficer.Aide.gagTrigger3); ShipsOfficer.Aide.gagTrigger3 = nil end
-    if ShipsOfficer.Aide.gagTrigger4 then killTrigger(ShipsOfficer.Aide.gagTrigger4); ShipsOfficer.Aide.gagTrigger4 = nil end
+function ShipsOfficer.shipfit.printCostSummary()
+    if ShipsOfficer.shipfit.scraperTrigger then killTrigger(ShipsOfficer.shipfit.scraperTrigger); ShipsOfficer.shipfit.scraperTrigger = nil end
+    if ShipsOfficer.shipfit.gagTrigger1 then killTrigger(ShipsOfficer.shipfit.gagTrigger1); ShipsOfficer.shipfit.gagTrigger1 = nil end
+    if ShipsOfficer.shipfit.gagTrigger2 then killTrigger(ShipsOfficer.shipfit.gagTrigger2); ShipsOfficer.shipfit.gagTrigger2 = nil end
+    if ShipsOfficer.shipfit.gagTrigger3 then killTrigger(ShipsOfficer.shipfit.gagTrigger3); ShipsOfficer.shipfit.gagTrigger3 = nil end
+    if ShipsOfficer.shipfit.gagTrigger4 then killTrigger(ShipsOfficer.shipfit.gagTrigger4); ShipsOfficer.shipfit.gagTrigger4 = nil end
 
     local grandTotal = 0
     local pricesUpdated = false
     cecho("\n<SeaGreen>[Ship's Officer]:<reset> Live Market Cost Estimation:\n")
 
-    for bComm, totalNeeded in pairs(ShipsOfficer.Aide.baseTotals) do
+    for bComm, totalNeeded in pairs(ShipsOfficer.shipfit.baseTotals) do
         local displayComm = bComm == "fat" and "animal fat" or bComm
-        local bought = ShipsOfficer.Aide.marketBought[bComm] or 0
-        local cost = ShipsOfficer.Aide.marketCost[bComm] or 0
+        local bought = ShipsOfficer.shipfit.marketBought[bComm] or 0
+        local cost = ShipsOfficer.shipfit.marketCost[bComm] or 0
         local missing = totalNeeded - bought
 
         grandTotal = grandTotal + cost
 
         if bought > 0 then
-            ShipsOfficer.Aide.nominalPrices[bComm] = math.floor(cost / bought)
+            ShipsOfficer.shipfit.nominalPrices[bComm] = math.floor(cost / bought)
             pricesUpdated = true
         end
 
@@ -389,7 +389,7 @@ function ShipsOfficer.Aide.printCostSummary()
     cecho(string.format("\n<SeaGreen>[Ship's Officer]:<reset> Grand Total Estimated Cost: <gold>%s gp<reset>\n\n", ShipsOfficer.formatNumber(grandTotal)))
 
     if pricesUpdated then
-        ShipsOfficer.Aide.savePrices()
+        ShipsOfficer.shipfit.savePrices()
         cecho("<SeaGreen>[Ship's Officer]:<reset> Nominal market prices successfully updated and saved.\n")
     end
 end
@@ -408,26 +408,30 @@ function ShipsOfficer.showHelp()
     cecho("    * Pans and zooms the map GUI to the specified location.\n")
     cecho("    * <gold>Example:<reset> so map northern sea\n\n")
 
-    cecho("<yellow>--- MODULE: Aide (Crafting & Cost Estimation) ---\n<reset>")
-    cecho("  <cyan>so aide calc <amount> <commodity><reset>\n")
+    cecho("<yellow>--- MODULE: Shipfitter (Crafting & Cost Estimation) ---\n<reset>")
+    cecho("  <cyan>so shipfit calc <amount> <commodity><reset>\n")
     cecho("    * Instantly calculates base materials for a single ship commodity.\n")
-    cecho("  <cyan>so aide equip<reset>\n")
+    cecho("  <cyan>so shipfit equip<reset>\n")
     cecho("    * Lists all available ship equipment you can add to your list.\n")
-    cecho("  <cyan>so aide equip <amount> <equipment><reset>\n")
+    cecho("  <cyan>so shipfit equip <amount> <equipment><reset>\n")
     cecho("    * Adds the required materials for ship equipment to your list.\n")
-    cecho("  <cyan>so aide add <amount> <commodity><reset>\n")
+    cecho("  <cyan>so shipfit add <amount> <commodity><reset>\n")
     cecho("    * Adds raw materials or ship commodities directly to your list.\n")
-    cecho("  <cyan>so aide list<reset>\n")
+    cecho("  <cyan>so shipfit list<reset>\n")
     cecho("    * Displays your current queued list and the base commodities needed.\n")
-    cecho("  <cyan>so aide cost [avg | now]<reset>\n")
+    cecho("  <cyan>so shipfit cost [avg | now]<reset>\n")
     cecho("    * Estimates the gold cost of your list based on historical averages (avg) or live market scraping (now).\n")
-    cecho("  <cyan>so aide clear<reset>\n")
+    cecho("  <cyan>so shipfit clear<reset>\n")
     cecho("    * Empties your current shopping list.\n\n")
 
     cecho("<yellow>--- UPCOMING MODULES ---\n<reset>")
-    cecho("  <geSilver>* Crew Wages, Morale & Provisions\n")
+    cecho("  * Crew Wages, Morale & Provisions\n")
     cecho("  * Ammunition Tracking\n")
-    cecho("  * Trade Deal Monitoring\n<reset>")
+    cecho("  * Sea Monster Hunting Timers\n")
+    cecho("  * Profit Splitting Calculator\n")
+    cecho("  * Voyage Progress Monitoring\n")
+    cecho("  * Trade Deal Monitoring\n")
+    cecho("  * Ship Combat Awareness Suite\n<reset>")
     
     cecho("\n<SeaGreen>=================================================================<reset>\n")
 end
@@ -469,41 +473,41 @@ ShipsOfficer.masterAlias = tempAlias("^so(?:\\s+(.*))?$", [[
             syntaxError()
         end
 
-    -- Route to Aide
-    elseif module == "aide" then
+    -- Route to Shipfitter
+    elseif module == "shipfit" then
         local cmd, args = rest:match("^(%a+)%s*(.*)$")
         cmd = cmd and cmd:lower() or ""
 
         if cmd == "calc" then
             local amt, comm = args:match("^(%d+)%s+(%a+)$")
-            if amt and comm then ShipsOfficer.Aide.calculateSingle(amt, comm) else syntaxError() end
+            if amt and comm then ShipsOfficer.shipfit.calculateSingle(amt, comm) else syntaxError() end
 
         elseif cmd == "add" then
             local amt, comm = args:match("^(%d+)%s+(%a+)$")
-            if amt and comm then ShipsOfficer.Aide.addToList(amt, comm) else syntaxError() end
+            if amt and comm then ShipsOfficer.shipfit.addToList(amt, comm) else syntaxError() end
 
         elseif cmd == "equip" then
             if args == "" then
-                ShipsOfficer.Aide.listEquipment()
+                ShipsOfficer.shipfit.listEquipment()
             else
                 local amt, equip = args:match("^(%d+)%s+(.+)$")
-                if amt and equip then ShipsOfficer.Aide.addEquipToList(amt, equip) else syntaxError() end
+                if amt and equip then ShipsOfficer.shipfit.addEquipToList(amt, equip) else syntaxError() end
             end
 
         elseif cmd == "list" and args == "" then
-            ShipsOfficer.Aide.calculateList()
+            ShipsOfficer.shipfit.calculateList()
 
         elseif cmd == "cost" then
             if args == "" or args:lower() == "avg" then
-                ShipsOfficer.Aide.calculateCost("avg")
+                ShipsOfficer.shipfit.calculateCost("avg")
             elseif args:lower() == "now" then
-                ShipsOfficer.Aide.calculateCost("now")
+                ShipsOfficer.shipfit.calculateCost("now")
             else
                 syntaxError()
             end
 
         elseif cmd == "clear" and args == "" then
-            ShipsOfficer.Aide.clearList()
+            ShipsOfficer.shipfit.clearList()
         else
             syntaxError()
         end
@@ -517,5 +521,5 @@ ShipsOfficer.masterAlias = tempAlias("^so(?:\\s+(.*))?$", [[
 -- INITIALIZATION CALLS
 -- =========================================================================
 
-ShipsOfficer.Aide.loadPrices()
+ShipsOfficer.shipfit.loadPrices()
 ShipsOfficer.Navigator:init()
